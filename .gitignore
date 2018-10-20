@@ -1,0 +1,12 @@
+frontend/node_modules/*
+frontend/.idea/*
+frontend/package-lock.json
+.DS_Store
+
+
+middleware/.DS_Store
+middleware/package-lock.json
+middleware/node_modules/*
+middleware/.idea/*
+
+
