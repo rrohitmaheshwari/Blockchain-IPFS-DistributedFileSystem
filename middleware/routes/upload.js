@@ -3,8 +3,8 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
 
 const MAX_SIZE = 52428800;
 
