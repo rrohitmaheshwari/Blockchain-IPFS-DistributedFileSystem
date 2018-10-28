@@ -1,15 +1,18 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
-var logger = require('morgan');
-var validator = require('express-validator');
+const createError = require('http-errors');
+const express = require('express');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
+const logger = require('morgan');
+const validator = require('express-validator');
+const session = require('express-session')
+const config = require('config');
+const indexRouter = require('./routes/index');
+const uploadRouter = require('./routes/upload');
 
-var indexRouter = require('./routes/index');
-var uploadRouter = require('./routes/upload');
-
-var app = express();
+let app = express();
+let expressMongoDb = require('express-mongo-db');
+app.use(expressMongoDb(config.mongodb_url))
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -22,7 +25,15 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(session({
+    secret: '1c4=%vs7desjy)h49@2qh&&((*0saggy3$^wi8pf#dlv9uko9(',
+    resave: false,
+    saveUninitialized: true,
+    duration: 30 * 60 * 1000,    //setting the time for active session 10 min
+    activeDuration: 5 * 60 * 1000,
+}))
 app.use(express.static(path.join(__dirname, 'public')));
+
 
 app.use('/', indexRouter);
 app.use('/upload', uploadRouter);
