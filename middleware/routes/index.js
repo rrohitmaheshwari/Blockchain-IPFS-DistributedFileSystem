@@ -4,23 +4,96 @@ const config = require('config');
 
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
+router.get('/', function (req, res, next) {
+    res.render('index', {title: 'Express'});
 });
 
 /* POST call for Registering new user. */
-router.post('/register', function(req, res, next) {
+router.post('/register', async (req, res, next) => {
 
-    //call to mongodb
-    req.db.collection("users").find({}).toArray(function(err, result) {
-        if (err) throw err;
-        console.log(result);
-    });
 
-    res.status(201);
-    res.send({ msg: 'User Registered Successfully' });
+    var findExistingUser = () => {
+        return new Promise((resolve, reject) => {
+
+            req.db
+                .collection('users')
+                .find({name: req.body.name})
+                .limit(1)
+                .toArray(function (err, data) {
+                    err
+                        ? reject(err)
+                        : resolve(data.length);
+                });
+        });
+    };
+
+    var result = await findExistingUser();
+
+    if (result === 1) {
+        res.status(403);
+        res.send({msg: 'User already Registered'});
+    }
+    else {
+        req.db.collection('users').insert({
+            email: req.body.email,
+            password: req.body.password,
+            publicKey: req.body.publicKey,
+            name: req.body.name
+        });
+        res.status(201);
+        res.send({msg: 'User Registered Successfully'});
+    }
+
 });
 
+
+/* POST call for Login user. */
+router.post('/login', async (req, res, next) => {
+
+    var findUser = () => {
+        return new Promise((resolve, reject) => {
+
+            req.db
+                .collection('users')
+                .find({email: req.body.email})
+                .limit(1)
+                .toArray(function (err, data) {
+                    err
+                        ? reject(err)
+                        : resolve(data);
+                });
+        });
+    };
+
+    var result = await findUser();
+
+    if (result.length === 1 && result[0].password === req.body.password) {
+        req.session.email = req.body.email;
+        res.status(200);
+        res.send({msg: 'User logged in Successfully'});
+    }
+    else {
+        res.status(403);
+        res.send({msg: 'Invalid credentials'});
+    }
+});
+
+/* Get call for Logout */
+router.get('/logout', function (req, res, next) {
+
+    console.log(req.session.email);
+    if (req.session.email) {
+        // delete session object
+        req.session.destroy();
+        res.status(200);
+        res.send({msg: 'User logged out Successfully'});
+    }
+    else
+    {
+        res.status(403);
+        res.send({msg: 'No user is logged in'});
+    }
+});
 
 
 module.exports = router;

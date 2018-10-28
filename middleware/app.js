@@ -27,10 +27,10 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(session({
     secret: '1c4=%vs7desjy)h49@2qh&&((*0saggy3$^wi8pf#dlv9uko9(',
-    resave: true,
+    resave: false,
     saveUninitialized: true,
-    name: 'dfs_app',
-    cookie: { secure: true, maxAge: 1800000 }
+    duration: 30 * 60 * 1000,    //setting the time for active session 10 min
+    activeDuration: 5 * 60 * 1000,
 }))
 app.use(express.static(path.join(__dirname, 'public')));
 
