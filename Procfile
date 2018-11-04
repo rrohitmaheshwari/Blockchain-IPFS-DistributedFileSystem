@@ -1,1 +1,1 @@
-web: npm startProd --prefix middleware
+web: npm start --prefix middleware
