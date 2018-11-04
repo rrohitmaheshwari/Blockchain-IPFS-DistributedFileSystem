@@ -2,6 +2,8 @@ const ipfsAPI = require('ipfs-api');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const config = require('config');
+const { isLoggedIn } = require('../lib/isLoggedIn')
 
 const express = require('express');
 const router = express.Router();
@@ -19,14 +21,10 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-const ipfs = ipfsAPI({
-  host: '127.0.0.1',
-  port: 5001,
-  protocol: 'http'
-});
+const ipfs = ipfsAPI(config.ipfs_config);
 
 /*  upload POST endpoint */
-router.post('/', upload.single('file'), (req, res) => {
+router.post('/upload',isLoggedIn, upload.single('file'), (req, res) => {
   if (!req.file) {
     return res.status(422).json({
       error: 'File needs to be provided.',

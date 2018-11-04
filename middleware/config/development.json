@@ -1,3 +1,8 @@
 {
-  "mongodb_url": "mongodb://mongodbadmin:uAsnd2Ainasd@ds157469.mlab.com:57469/dfs-mongodb"
+  "mongodb_url": "mongodb://mongodbadmin:uAsnd2Ainasd@ds157469.mlab.com:57469/dfs-mongodb",
+  "ipfs_config": {
+    "host": "127.0.0.1",
+    "port": 5001,
+    "protocol": "http"
+  }
 }
