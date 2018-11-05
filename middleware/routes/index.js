@@ -1,16 +1,17 @@
 let express = require('express');
 let router = express.Router();
 const config = require('config');
+const logger = require('../config/logger')
 
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
-    res.render('index', {title: 'Express'});
+    res.render('index', {title: 'DFS using Blockchain-server'});
 });
 
 /* POST call for Registering new user. */
 router.post('/register', async (req, res, next) => {
-
+    logger.info("[POST]/register",null,2);
 
     var findExistingUser = () => {
         return new Promise((resolve, reject) => {
@@ -49,6 +50,7 @@ router.post('/register', async (req, res, next) => {
 
 /* POST call for Login user. */
 router.post('/login', async (req, res, next) => {
+    logger.info("[POST]/login",null,2);
 
     var findUser = () => {
         return new Promise((resolve, reject) => {
@@ -80,7 +82,7 @@ router.post('/login', async (req, res, next) => {
 
 /* Get call for Logout */
 router.get('/logout', function (req, res, next) {
-
+    logger.info("[GET]/logout",null,2);
     console.log(req.session.email);
     if (req.session.email) {
         // delete session object
