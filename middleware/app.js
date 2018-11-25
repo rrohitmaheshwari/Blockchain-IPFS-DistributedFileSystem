@@ -8,7 +8,7 @@ const validator = require('express-validator');
 const session = require('express-session')
 const config = require('config');
 const indexRouter = require('./routes/index');
-const uploadRouter = require('./routes/upload');
+const ipfsRouter = require('./routes/ipfs');
 
 let app = express();
 let expressMongoDb = require('express-mongo-db');
@@ -36,7 +36,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 
 app.use('/', indexRouter);
-app.use('/upload', uploadRouter);
+app.use('/ipfs', ipfsRouter);
 
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
