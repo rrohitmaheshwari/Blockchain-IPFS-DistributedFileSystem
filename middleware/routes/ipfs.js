@@ -54,7 +54,7 @@ router.post('/upload', isLoggedIn, upload.single('file'), (req, res) => {
     }
 
     const data = fs.readFileSync(req.file.path);
-    return ipfs.add(data, (err, files) => {
+    ipfs.add(data, (err, files) => {
         fs.unlink(req.file.path);
         if (files) {
 
@@ -73,7 +73,7 @@ router.post('/upload', isLoggedIn, upload.single('file'), (req, res) => {
                 return res.json({
                     msg: 'Data has been uploaded!',
                 });
-            }).catch((err)=>{
+            }).catch((err) => {
                 console.log(err);
                 return res.status(500).json({
                     error: err,
@@ -93,19 +93,13 @@ router.get('/', function (req, res, next) {
 
 
 /*  upload GET endpoint. */
-router.get('/readFiles', function (req, res) {
-    blocksCtrl.blockchain_read.then((result) => {
+router.get('/readFiles', isLoggedIn, function (req, res) {
+    blocksCtrl.blockchain_read().then((result) => {
 
 
         let response = result.data;
         let transaction = result.transaction;
 
-
-        console.log('response');
-        console.log(response);
-
-        console.log('transaction');
-        console.log(transaction);
 
         let responseData = [];
 
@@ -121,26 +115,22 @@ router.get('/readFiles', function (req, res) {
 
         for (let i = 1; i < response.length; i++) {
 
+            let blockdata = JSON.parse(response[i].data);
+            for (let j = 0; j < blockdata.length; j++) {
 
-            for (let j = 0; j < response[i].data.length; j++) {
 
-                let data = response[i].data[j];
-
-                if (data.senderEmail === req.session.req.session.email || data.receiverEmail === req.session.req.session.email) {
-                    responseData.push(data);
+                if (blockdata[j].senderEmail === req.session.email || blockdata[j].receiverEmail === req.session.email) {
+                    responseData.push(blockdata[j]);
                 }
 
             }
 
         }
 
-        console.log('response len');
-        console.log(response.length);
-
-        console.log('transaction len');
-        console.log(transaction.length);
         res.status(200);
         res.send({data: responseData});
+    }).catch((err) => {
+        console.log(err);
     });
 
 });

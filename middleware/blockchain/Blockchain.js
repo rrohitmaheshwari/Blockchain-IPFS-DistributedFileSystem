@@ -1,7 +1,6 @@
-
 var Block = require("./Block.js")
 
-module.exports = class Blockchain{
+module.exports = class Blockchain {
     constructor() {
         this.chain = [this.createGenesis()];
     }
@@ -14,21 +13,23 @@ module.exports = class Blockchain{
         return this.chain[this.chain.length - 1]
     }
 
-    addBlock(newBlock){
+    async addBlock(newBlock) {
         newBlock.previousHash = this.latestBlock().hash;
         newBlock.hash = newBlock.calculateHash();
         this.chain.push(newBlock);
-        return;
+        console.log(JSON.stringify(this.chain));
+        return (this.chain);
     }
 
 
-    blockRead(){
+    async blockRead() {
         console.log('blockRead');
-        return(this.chain);
+        console.log(JSON.stringify(this.chain));
+        return (this.chain);
     }
 
     checkValid() {
-        for(let i = 1; i < this.chain.length; i++) {
+        for (let i = 1; i < this.chain.length; i++) {
             const currentBlock = this.chain[i];
             const previousBlock = this.chain[i - 1];
 

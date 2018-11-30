@@ -1,7 +1,7 @@
 var _ = require('lodash');
 var Block = require("./Block.js")
 var Blockchain = require("./Blockchain.js");
-var blockChain = new Blockchain();
+let blockChain = new Blockchain();
 
 var transaction_map = [];
 var TRANSACTION_SIZE = 3;
@@ -9,17 +9,20 @@ var TRANSACTION_SIZE = 3;
 
 exports.blockchain_upload = function (transaction) {
 
-    return new Promise(function (resolve,reject) {
+    return new Promise(async function (resolve, reject) {
         transaction_map.push(transaction);
 
         console.log("blockchain_upload");
+        console.log(transaction_map);
 
         if (transaction_map.length === TRANSACTION_SIZE) {
-            insertIntoBlockchain(createNewBlock(transaction_map)).then(() => {
-                transaction_map = [];
-                transaction_map.length=0;
-                resolve();
-            });
+            let nb = await createNewBlock(transaction_map);
+
+            await insertIntoBlockchain(nb)
+            console.log(" transaction_map = [];")
+            transaction_map.length = 0;
+            console.log(transaction_map);
+            resolve();
 
         }
         else {
@@ -29,30 +32,35 @@ exports.blockchain_upload = function (transaction) {
 };
 
 
-exports.blockchain_read = new Promise(function (resolve, reject) {
+exports.blockchain_read = function () {
+    return new Promise(async function (resolve, reject) {
 
-    console.log('blockchain_read');
-    let data = blockChain.blockRead();
+        console.log('blockchain_read');
+        console.log(blockChain);
+        // console.log(await blockChain.blockRead());
 
-    let response = {
-        'data': data,
-        'transaction': transaction_map
-    }
-    resolve(response);
+        resolve({
+            'data': blockChain,
+            'transaction': transaction_map
+        });
 
-});
+    });
+}
 
 
 var createNewBlock = function (data) {
-    var new_block = new Block(new Date(), data);
-    return new_block;
+    return new Promise(function (resolve, reject) {
+        var new_block = new Block(new Date(), data);
+        console.log('new Block');
+        console.log(JSON.stringify(new_block));
+        resolve(new_block);
+    });
 }
 
 var insertIntoBlockchain = function (block) {
-    return new Promise(function (resolve,reject) {
-        blockChain.addBlock(block);
-
-        console.log("insertIntoBlockchain");
+    return new Promise(async function (resolve, reject) {
+        blockChain = await blockChain.addBlock(block);
+        console.log("**insertIntoBlockchain blockChain.chain");
         console.log(blockChain);
         resolve();
     });
