@@ -9,7 +9,7 @@ var TRANSACTION_SIZE = 3;
 
 exports.blockchain_upload = function (transaction) {
 
-    return new Promise(function () {
+    return new Promise(function (resolve,reject) {
         transaction_map.push(transaction);
 
         console.log("blockchain_upload");
@@ -17,6 +17,7 @@ exports.blockchain_upload = function (transaction) {
         if (transaction_map.length === TRANSACTION_SIZE) {
             insertIntoBlockchain(createNewBlock(transaction_map)).then(() => {
                 transaction_map = [];
+                transaction_map.length=0;
                 resolve();
             });
 
@@ -48,7 +49,7 @@ var createNewBlock = function (data) {
 }
 
 var insertIntoBlockchain = function (block) {
-    return new Promise(function () {
+    return new Promise(function (resolve,reject) {
         blockChain.addBlock(block);
 
         console.log("insertIntoBlockchain");

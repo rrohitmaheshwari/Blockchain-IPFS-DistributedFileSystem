@@ -73,14 +73,16 @@ router.post('/upload', isLoggedIn, upload.single('file'), (req, res) => {
                 return res.json({
                     msg: 'Data has been uploaded!',
                 });
+            }).catch((err)=>{
+                console.log(err);
+                return res.status(500).json({
+                    error: err,
+                });
             });
-
 
         }
 
-        return res.status(500).json({
-            error: err,
-        });
+
     });
 });
 
